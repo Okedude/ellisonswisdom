@@ -48,7 +48,7 @@
             <div class="max-w-xl mx-auto p-6 rounded-2xl bg-[#1e1e1e] shadow-lg border border-gray-700">
                 <h1 class="text-4xl font-bold mb-4">Welcome to Ellison</h1>
                 <p class="text-lg text-gray-400 mb-6">A test of your knowledge, wit, and endurance.</p>
-                <p class="text-sm mb-6 max-w-sm mx-auto text-gray-500">You must answer 30 questions with a minimum word count that increases with each correct answer. You have a two-minute maximum time per question, and a real-time countdown. If the timer runs out, or you fail to meet the word count, you fail. A word is counted as having 5 or more letters.</p>
+                <p class="text-sm mb-6 max-w-sm mx-auto text-gray-500">You must answer 30 questions with a minimum word count that increases with each correct answer, and you must include 10 specific keywords. You have a two-minute maximum time per question, and a real-time countdown. If the timer runs out, or you fail to meet the word or keyword count, you fail. A word is counted as having 5 or more letters.</p>
                 <button onclick="startGame()" class="px-8 py-4 bg-gray-600 hover:bg-gray-500 text-white font-bold rounded-full transition-colors duration-300">
                     Begin
                 </button>
@@ -62,7 +62,13 @@
                     <p class="text-sm font-semibold text-gray-400" id="question-counter">Question 1/30</p>
                     <p class="text-2xl font-bold text-gray-300" id="countdown-timer">0:30</p>
                 </div>
-                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-200" id="question-text"></h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-gray-200" id="question-text"></h2>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-semibold text-gray-400 mb-2">Keywords to include:</p>
+                    <div id="keyword-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm text-yellow-500"></div>
+                </div>
+
                 <textarea id="answer-input" class="text-area w-full mb-4 focus:border-gray-500" placeholder="Type your answer here..."></textarea>
                 <p class="text-sm text-gray-400 mb-6 flex justify-between">
                     <span>Required words: <span id="required-words" class="font-bold text-yellow-500">50</span></span>
@@ -94,36 +100,126 @@
     <script>
         // Game variables
         const questions = [
-            "What is the capital of Australia?",
-            "Explain the concept of quantum entanglement in simple terms.",
-            "Who wrote '1984' and what is its central theme?",
-            "Discuss the historical significance of the Roman Empire's fall.",
-            "What is the Pythagorean theorem and how is it used?",
-            "Describe the process of photosynthesis.",
-            "Explain the difference between a republic and a democracy.",
-            "What are the major causes of climate change and what are some potential solutions?",
-            "Who was Leonardo da Vinci and what were his key contributions to art and science?",
-            "Discuss the ethical implications of artificial intelligence.",
-            "What is the name of the longest river in the world?",
-            "Explain the theory of relativity.",
-            "Describe the importance of the Magna Carta.",
-            "What is the human digestive system and how does it function?",
-            "Discuss the impact of the printing press on society.",
-            "What is the main function of the human nervous system?",
-            "Explain the concept of supply and demand in economics.",
-            "Who was Marie Curie and what was her major scientific achievement?",
-            "Discuss the role of empathy in human relationships.",
-            "What are the different types of galaxies in the universe?",
-            "Explain the butterfly effect in chaos theory.",
-            "Describe the life cycle of a star.",
-            "What is the difference between a hurricane, a tornado, and a typhoon?",
-            "Discuss the benefits and drawbacks of globalization.",
-            "Who was Nelson Mandela and why is he a significant historical figure?",
-            "What is the role of mitochondria in a cell?",
-            "Explain the concept of herd immunity.",
-            "Describe the features and evolution of the internet.",
-            "Discuss the philosophical concept of free will.",
-            "What is the purpose of the United Nations?"
+            {
+                text: "What is the capital of Australia? Describe its significance and main features.",
+                keywords: ["Canberra", "government", "parliament", "lake", "national", "gallery", "capital", "architectural", "planned", "commonwealth"]
+            },
+            {
+                text: "Explain the concept of quantum entanglement in simple terms.",
+                keywords: ["quantum", "entanglement", "particles", "measurement", "instantaneously", "connected", "separated", "state", "superposition", "correlation"]
+            },
+            {
+                text: "Who wrote '1984' and what is its central theme?",
+                keywords: ["George", "Orwell", "dystopian", "totalitarianism", "surveillance", "propaganda", "thoughtcrime", "individual", "freedom", "oppression"]
+            },
+            {
+                text: "Discuss the historical significance of the Roman Empire's fall.",
+                keywords: ["Roman", "Empire", "decline", "invasion", "economic", "political", "collapse", "legacy", "Western", "civilization"]
+            },
+            {
+                text: "What is the Pythagorean theorem and how is it used?",
+                keywords: ["Pythagorean", "theorem", "geometry", "triangle", "hypotenuse", "right-angled", "sides", "calculate", "distance", "formula"]
+            },
+            {
+                text: "Describe the process of photosynthesis.",
+                keywords: ["photosynthesis", "plants", "sunlight", "carbon", "dioxide", "water", "glucose", "oxygen", "chlorophyll", "energy"]
+            },
+            {
+                text: "Explain the difference between a republic and a democracy.",
+                keywords: ["republic", "democracy", "government", "citizens", "representatives", "majority", "elected", "constitution", "rule", "law"]
+            },
+            {
+                text: "What are the major causes of climate change and what are some potential solutions?",
+                keywords: ["climate", "change", "greenhouse", "gases", "fossil", "fuels", "deforestation", "renewable", "energy", "sustainable"]
+            },
+            {
+                text: "Who was Leonardo da Vinci and what were his key contributions to art and science?",
+                keywords: ["Leonardo", "Vinci", "artist", "scientist", "inventor", "Renaissance", "Mona", "Lisa", "notebooks", "anatomy"]
+            },
+            {
+                text: "Discuss the ethical implications of artificial intelligence.",
+                keywords: ["artificial", "intelligence", "ethics", "autonomy", "bias", "privacy", "employment", "humanity", "decision-making", "accountability"]
+            },
+            {
+                text: "What is the name of the longest river in the world?",
+                keywords: ["longest", "river", "Nile", "Amazon", "Africa", "South", "America", "continent", "length", "geography"]
+            },
+            {
+                text: "Explain the theory of relativity.",
+                keywords: ["relativity", "Einstein", "physics", "gravity", "space-time", "mass", "light", "velocity", "dimension", "interconnected"]
+            },
+            {
+                text: "Describe the importance of the Magna Carta.",
+                keywords: ["Magna", "Carta", "England", "king", "feudal", "rights", "monarchy", "justice", "document", "government"]
+            },
+            {
+                text: "What is the human digestive system and how does it function?",
+                keywords: ["digestive", "system", "stomach", "intestines", "nutrients", "enzymes", "digestion", "process", "absorption", "waste"]
+            },
+            {
+                text: "Discuss the impact of the printing press on society.",
+                keywords: ["printing", "press", "Gutenberg", "knowledge", "literacy", "Reformation", "information", "revolution", "society", "accessible"]
+            },
+            {
+                text: "What is the main function of the human nervous system?",
+                keywords: ["nervous", "system", "brain", "spinal", "nerves", "signals", "communication", "control", "responses", "body"]
+            },
+            {
+                text: "Explain the concept of supply and demand in economics.",
+                keywords: ["supply", "demand", "economics", "market", "price", "consumers", "producers", "quantity", "equilibrium", "principle"]
+            },
+            {
+                text: "Who was Marie Curie and what was her major scientific achievement?",
+                keywords: ["Marie", "Curie", "scientist", "physics", "chemistry", "radium", "polonium", "radiation", "pioneering", "research"]
+            },
+            {
+                text: "Discuss the role of empathy in human relationships.",
+                keywords: ["empathy", "relationships", "understanding", "feelings", "compassion", "perspective", "connect", "communication", "emotional", "bond"]
+            },
+            {
+                text: "What are the different types of galaxies in the universe?",
+                keywords: ["galaxies", "universe", "spiral", "elliptical", "irregular", "Milky", "Way", "galaxy", "stars", "formation"]
+            },
+            {
+                text: "Explain the butterfly effect in chaos theory.",
+                keywords: ["butterfly", "effect", "chaos", "theory", "sensitive", "dependence", "initial", "conditions", "weather", "systems"]
+            },
+            {
+                text: "Describe the life cycle of a star.",
+                keywords: ["life", "cycle", "star", "formation", "protostar", "supernova", "dwarf", "neutron", "black", "hole"]
+            },
+            {
+                text: "What is the difference between a hurricane, a tornado, and a typhoon?",
+                keywords: ["hurricane", "tornado", "typhoon", "cyclone", "storm", "location", "formation", "wind", "weather", "patterns"]
+            },
+            {
+                text: "Discuss the benefits and drawbacks of globalization.",
+                keywords: ["globalization", "benefits", "drawbacks", "trade", "culture", "technology", "economy", "environment", "employment", "inequality"]
+            },
+            {
+                text: "Who was Nelson Mandela and why is he a significant historical figure?",
+                keywords: ["Nelson", "Mandela", "historical", "apartheid", "South", "Africa", "president", "activist", "freedom", "leadership"]
+            },
+            {
+                text: "What is the role of mitochondria in a cell?",
+                keywords: ["mitochondria", "cell", "powerhouse", "energy", "ATP", "cellular", "respiration", "organelle", "function", "biology"]
+            },
+            {
+                text: "Explain the concept of herd immunity.",
+                keywords: ["herd", "immunity", "population", "vaccination", "disease", "outbreak", "protection", "unvaccinated", "prevent", "spread"]
+            },
+            {
+                text: "Describe the features and evolution of the internet.",
+                keywords: ["internet", "evolution", "ARPANET", "WWW", "information", "networks", "communication", "technology", "development", "society"]
+            },
+            {
+                text: "Discuss the philosophical concept of free will.",
+                keywords: ["free", "will", "philosophy", "determinism", "agency", "choice", "responsibility", "consciousness", "control", "destiny"]
+            },
+            {
+                text: "What is the purpose of the United Nations?",
+                keywords: ["United", "Nations", "purpose", "peace", "security", "cooperation", "humanitarian", "rights", "international", "sustainable"]
+            }
         ];
 
         let currentQuestionIndex = 0;
@@ -131,7 +227,6 @@
         let countdownSeconds = 30; // Starting countdown
         let maxTime = 120; // 2 minutes per question
         let timerInterval;
-        let countdownInterval;
 
         // DOM elements
         const startScreen = document.getElementById('start-screen');
@@ -144,6 +239,7 @@
         const questionCounterDisplay = document.getElementById('question-counter');
         const requiredWordsDisplay = document.getElementById('required-words');
         const wordCountDisplay = document.getElementById('word-count');
+        const keywordList = document.getElementById('keyword-list');
 
         // Function to show a specific screen
         function showScreen(screenId) {
@@ -191,11 +287,11 @@
             if (currentQuestionIndex >= questions.length) {
                 showScreen('win-screen');
                 clearInterval(timerInterval);
-                clearInterval(countdownInterval);
                 return;
             }
 
-            questionText.textContent = questions[currentQuestionIndex];
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.text;
             questionCounterDisplay.textContent = `Question ${currentQuestionIndex + 1}/30`;
             requiredWordsDisplay.textContent = requiredWordCount;
             answerInput.value = '';
@@ -203,8 +299,16 @@
             wordCountDisplay.classList.remove('text-green-500');
             wordCountDisplay.classList.add('text-gray-400');
             
+            // Display keywords
+            keywordList.innerHTML = '';
+            currentQuestion.keywords.forEach(keyword => {
+                const span = document.createElement('span');
+                span.textContent = keyword;
+                span.classList.add('p-2', 'bg-gray-700', 'rounded-lg', 'text-center', 'shadow');
+                keywordList.appendChild(span);
+            });
+            
             clearInterval(timerInterval);
-            clearInterval(countdownInterval);
             startCountdown();
         }
 
@@ -216,18 +320,11 @@
 
             countdownTimerDisplay.textContent = formatTime(countdownRemaining);
             
-            // This interval handles both the main timer (for max 2 min) and the visible countdown
             timerInterval = setInterval(() => {
                 elapsedTotalTime += 1000;
                 countdownRemaining--;
                 
-                if (elapsedTotalTime > maxTimeInMillis) {
-                    showScreen('lose-screen');
-                    clearInterval(timerInterval);
-                    return;
-                }
-
-                if (countdownRemaining < 0) {
+                if (elapsedTotalTime > maxTimeInMillis || countdownRemaining < 0) {
                     showScreen('lose-screen');
                     clearInterval(timerInterval);
                     return;
@@ -247,8 +344,14 @@
         function submitAnswer() {
             const answer = answerInput.value.trim();
             const words = countWords(answer);
+            const currentQuestion = questions[currentQuestionIndex];
+            const requiredKeywords = currentQuestion.keywords;
 
-            if (words >= requiredWordCount) {
+            const hasAllKeywords = requiredKeywords.every(keyword => 
+                answer.toLowerCase().includes(keyword.toLowerCase())
+            );
+
+            if (words >= requiredWordCount && hasAllKeywords) {
                 currentQuestionIndex++;
                 requiredWordCount += 50;
                 countdownSeconds += 5;
