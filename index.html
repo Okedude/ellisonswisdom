@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ellison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease-in-out;
+        }
+        .screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        #start-screen { display: flex; }
+        .text-area {
+            min-height: 200px;
+            resize: none;
+            overflow-y: auto;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background-color: #2c2c2c;
+            color: #d1d5db;
+            transition: all 0.3s ease;
+        }
+        .text-area:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-[#121212] text-gray-200">
+
+    <!-- Game Container -->
+    <div id="game-container" class="container mx-auto p-4 md:p-8">
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen bg-[#121212]">
+            <div class="max-w-xl mx-auto p-6 rounded-2xl bg-[#1e1e1e] shadow-lg border border-gray-700">
+                <h1 class="text-4xl font-bold mb-4">Welcome to Ellison</h1>
+                <p class="text-lg text-gray-400 mb-6">A test of your knowledge, wit, and endurance.</p>
+                <p class="text-sm mb-6 max-w-sm mx-auto text-gray-500">You must answer 30 questions with a minimum word count that increases with each correct answer. You have a two-minute maximum time per question, and a real-time countdown. If the timer runs out, or you fail to meet the word count, you fail. A word is counted as having 5 or more letters.</p>
+                <button onclick="startGame()" class="px-8 py-4 bg-gray-600 hover:bg-gray-500 text-white font-bold rounded-full transition-colors duration-300">
+                    Begin
+                </button>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen bg-[#121212]">
+            <div class="max-w-2xl mx-auto p-6 md:p-10 rounded-2xl bg-[#1e1e1e] shadow-lg border border-gray-700 w-full">
+                <div class="flex justify-between items-center mb-6">
+                    <p class="text-sm font-semibold text-gray-400" id="question-counter">Question 1/30</p>
+                    <p class="text-2xl font-bold text-gray-300" id="countdown-timer">0:30</p>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-200" id="question-text"></h2>
+                <textarea id="answer-input" class="text-area w-full mb-4 focus:border-gray-500" placeholder="Type your answer here..."></textarea>
+                <p class="text-sm text-gray-400 mb-6 flex justify-between">
+                    <span>Required words: <span id="required-words" class="font-bold text-yellow-500">50</span></span>
+                    <span>Your words: <span id="word-count" class="font-bold text-gray-400">0</span></span>
+                </p>
+                <button onclick="submitAnswer()" class="w-full px-8 py-4 bg-gray-600 hover:bg-gray-500 text-white font-bold rounded-full transition-colors duration-300">
+                    Submit
+                </button>
+            </div>
+        </div>
+
+        <!-- Win Screen -->
+        <div id="win-screen" class="screen bg-[#121212]">
+            <div class="max-w-xl mx-auto p-8 rounded-2xl bg-emerald-700 shadow-xl border border-emerald-500">
+                <p class="text-7xl mb-4">😊</p>
+                <h1 class="text-4xl font-bold mb-4">You made it!</h1>
+                <p class="text-lg text-white">Ellison is now proud of you!</p>
+            </div>
+        </div>
+
+        <!-- Lose Screen -->
+        <div id="lose-screen" class="screen bg-red-800">
+            <div class="max-w-xl mx-auto p-8 rounded-2xl bg-red-900 shadow-xl border border-red-700">
+                <p class="text-5xl font-bold mb-4 text-red-300">"Ellison thinks you're a peace of shit, tbh. Try again."</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        const questions = [
+            "What is the capital of Australia?",
+            "Explain the concept of quantum entanglement in simple terms.",
+            "Who wrote '1984' and what is its central theme?",
+            "Discuss the historical significance of the Roman Empire's fall.",
+            "What is the Pythagorean theorem and how is it used?",
+            "Describe the process of photosynthesis.",
+            "Explain the difference between a republic and a democracy.",
+            "What are the major causes of climate change and what are some potential solutions?",
+            "Who was Leonardo da Vinci and what were his key contributions to art and science?",
+            "Discuss the ethical implications of artificial intelligence.",
+            "What is the name of the longest river in the world?",
+            "Explain the theory of relativity.",
+            "Describe the importance of the Magna Carta.",
+            "What is the human digestive system and how does it function?",
+            "Discuss the impact of the printing press on society.",
+            "What is the main function of the human nervous system?",
+            "Explain the concept of supply and demand in economics.",
+            "Who was Marie Curie and what was her major scientific achievement?",
+            "Discuss the role of empathy in human relationships.",
+            "What are the different types of galaxies in the universe?",
+            "Explain the butterfly effect in chaos theory.",
+            "Describe the life cycle of a star.",
+            "What is the difference between a hurricane, a tornado, and a typhoon?",
+            "Discuss the benefits and drawbacks of globalization.",
+            "Who was Nelson Mandela and why is he a significant historical figure?",
+            "What is the role of mitochondria in a cell?",
+            "Explain the concept of herd immunity.",
+            "Describe the features and evolution of the internet.",
+            "Discuss the philosophical concept of free will.",
+            "What is the purpose of the United Nations?"
+        ];
+
+        let currentQuestionIndex = 0;
+        let requiredWordCount = 50;
+        let countdownSeconds = 30; // Starting countdown
+        let maxTime = 120; // 2 minutes per question
+        let timerInterval;
+        let countdownInterval;
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const winScreen = document.getElementById('win-screen');
+        const loseScreen = document.getElementById('lose-screen');
+        const questionText = document.getElementById('question-text');
+        const answerInput = document.getElementById('answer-input');
+        const countdownTimerDisplay = document.getElementById('countdown-timer');
+        const questionCounterDisplay = document.getElementById('question-counter');
+        const requiredWordsDisplay = document.getElementById('required-words');
+        const wordCountDisplay = document.getElementById('word-count');
+
+        // Function to show a specific screen
+        function showScreen(screenId) {
+            const screens = [startScreen, questionScreen, winScreen, loseScreen];
+            screens.forEach(screen => screen.style.display = 'none');
+            document.body.className = "bg-[#121212] text-gray-200"; // Reset body class for most screens
+            document.body.style.backgroundColor = ''; // Reset background color
+            if (screenId === 'lose-screen') {
+                document.body.className = "bg-red-800 text-gray-200";
+            }
+            document.getElementById(screenId).style.display = 'flex';
+        }
+
+        // Custom word counter (words with 5 or more letters)
+        function countWords(text) {
+            const words = text.split(/\s+/).filter(word => word.length >= 5);
+            return words.length;
+        }
+
+        // Update word count display
+        answerInput.addEventListener('input', () => {
+            const text = answerInput.value;
+            const count = countWords(text);
+            wordCountDisplay.textContent = count;
+            if (count >= requiredWordCount) {
+                wordCountDisplay.classList.add('text-green-500');
+                wordCountDisplay.classList.remove('text-gray-400');
+            } else {
+                wordCountDisplay.classList.remove('text-green-500');
+                wordCountDisplay.classList.add('text-gray-400');
+            }
+        });
+
+        // Start the game
+        function startGame() {
+            currentQuestionIndex = 0;
+            requiredWordCount = 50;
+            countdownSeconds = 30;
+            showScreen('question-screen');
+            loadQuestion();
+        }
+
+        // Load the next question
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showScreen('win-screen');
+                clearInterval(timerInterval);
+                clearInterval(countdownInterval);
+                return;
+            }
+
+            questionText.textContent = questions[currentQuestionIndex];
+            questionCounterDisplay.textContent = `Question ${currentQuestionIndex + 1}/30`;
+            requiredWordsDisplay.textContent = requiredWordCount;
+            answerInput.value = '';
+            wordCountDisplay.textContent = '0';
+            wordCountDisplay.classList.remove('text-green-500');
+            wordCountDisplay.classList.add('text-gray-400');
+            
+            clearInterval(timerInterval);
+            clearInterval(countdownInterval);
+            startCountdown();
+        }
+
+        // Start the countdown timer
+        function startCountdown() {
+            let elapsedTotalTime = 0;
+            const maxTimeInMillis = maxTime * 1000;
+            let countdownRemaining = countdownSeconds;
+
+            countdownTimerDisplay.textContent = formatTime(countdownRemaining);
+            
+            // This interval handles both the main timer (for max 2 min) and the visible countdown
+            timerInterval = setInterval(() => {
+                elapsedTotalTime += 1000;
+                countdownRemaining--;
+                
+                if (elapsedTotalTime > maxTimeInMillis) {
+                    showScreen('lose-screen');
+                    clearInterval(timerInterval);
+                    return;
+                }
+
+                if (countdownRemaining < 0) {
+                    showScreen('lose-screen');
+                    clearInterval(timerInterval);
+                    return;
+                }
+                countdownTimerDisplay.textContent = formatTime(countdownRemaining);
+            }, 1000);
+        }
+
+        // Format time for display
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+
+        // Submit the answer
+        function submitAnswer() {
+            const answer = answerInput.value.trim();
+            const words = countWords(answer);
+
+            if (words >= requiredWordCount) {
+                currentQuestionIndex++;
+                requiredWordCount += 50;
+                countdownSeconds += 5;
+                loadQuestion();
+            } else {
+                showScreen('lose-screen');
+                clearInterval(timerInterval);
+            }
+        }
+    </script>
+</body>
+</html>
