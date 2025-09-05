@@ -241,6 +241,17 @@
         const wordCountDisplay = document.getElementById('word-count');
         const keywordList = document.getElementById('keyword-list');
 
+        // Disable copy, cut, and paste events on the answer input field
+        answerInput.addEventListener('copy', (event) => {
+            event.preventDefault();
+        });
+        answerInput.addEventListener('cut', (event) => {
+            event.preventDefault();
+        });
+        answerInput.addEventListener('paste', (event) => {
+            event.preventDefault();
+        });
+
         // Function to show a specific screen
         function showScreen(screenId) {
             const screens = [startScreen, questionScreen, winScreen, loseScreen];
